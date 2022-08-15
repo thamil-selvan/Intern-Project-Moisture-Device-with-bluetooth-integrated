@@ -1,9 +1,29 @@
+//This example code is in the Public Domain (or CC0 licensed, at your option.)
+//By Evandro Copercini - 2018
+//
+//This example creates a bridge between Serial and Classical Bluetooth (SPP)
+//and also demonstrate that SerialBT have the same functionalities of a normal Serial
+
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+#if !defined(CONFIG_BT_SPP_ENABLED)
+#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
+#endif
+
+BluetoothSerial SerialBT;
+
 const byte pin = 25;
 float val_ar[200],av=0;
 int c = 0;
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  SerialBT.begin("Waycool_Moisture device"); //Bluetooth device name
+  Serial.println("The device started, now you can pair it with bluetooth!");
   pinMode(pin, INPUT_PULLUP);
   
 }
@@ -51,5 +71,9 @@ void loop()
     delay(1000);
   }
   
+  if(SerialBT.read()=='a'){
+    SerialBT.println("56\n");
+    Serial.println("Data sent");
+  }
   delay(5);
 }
